@@ -47,10 +47,8 @@ apt_packages = [
     "python-setuptools",
     "nginx",
     "python-dev",
-    "mysql-server",
     "libmysqlclient-dev",
-    "libmysqlclient16",
-    "libmysqlclient16-dev",
+    "mysql-server",
     "zlib1g-dev", 
     "libfreetype6-dev", 
     "liblcms1-dev",
@@ -78,8 +76,8 @@ end
 python_packages = [
     "Django==1.4.2",
     "pyyaml",
-    "MySQL-python",
     "PIL==1.1.7",
+    "MySQL-python",
     "South==0.7.6",
     "argparse==1.2.1",
     "cropresize==0.1.6",
@@ -94,18 +92,14 @@ python_packages = [
 python_packages.each do |package|
     execute "pip install #{package}" do
         action :run
-        environment ({'PATH' => '/home/%s/venv/bin:/usr/bin' % node["new_user"]})
-
+        user node[:new_user]
+        group node[:new_user]
+        environment ({'PATH' => '/home/%s/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' % node["new_user"]})
     end
 end
 
 template "/etc/nginx/sites-available/%s.conf" % node["new_user"] do
     source "site.conf.erb"
-    variables(
-        :domains => node[:domains],
-        :user => node[:new_user],
-        :port => node[:port] 
-    )
 end
 
 link "/etc/nginx/sites-enabled/%s.conf" % node["new_user"] do
@@ -113,16 +107,11 @@ link "/etc/nginx/sites-enabled/%s.conf" % node["new_user"] do
 end
 
 service "nginx" do
-    action :reload
+    action :restart
 end
 
 template "/etc/supervisor/conf.d/%s.conf" % node["new_user"] do
     source "supervisor.conf.erb"
-    variables(
-        :user => node[:new_user],
-        :port => node[:port],
-        :new_port => node[:new_port]
-    )
 end
 
 service "supervisor" do
@@ -138,16 +127,15 @@ execute "mysql -u root -ppassword -e \"create database %s\"" % node["dbname"] do
     returns [0, 1]
 end
 
-execute "mysql -u root -ppassword -e \"GRANT ALL ON capacitr_moooink2.* TO
-capacitr_moooink@localhost IDENTIFIED BY '06d8e1c3';\"" do
+execute "mysql -u root -ppassword -e \"GRANT ALL ON %s.* TO %s@localhost
+IDENTIFIED BY '%s';\"" % [node[:dbname], node[:dbuser], node[:dbpass]]do
     action :run
 end
-
 
 execute "python manage.py syncdb --noinput" do
     action :run
     cwd "/home/%s/site" % node["new_user"]
-    environment ({'PATH' => '/home/%s/venv/bin' % node["new_user"]})
+    environment ({'PATH' => '/home/%s/venv/bin:/usr/bin' % node["new_user"]})
     user node["new_user"]
     group node["new_user"]
 end
@@ -167,6 +155,15 @@ execute "python manage.py loaddata fixtures/sites.yaml" do
     user node["new_user"]
     group node["new_user"]
 end
+
+execute "python manage.py loaddata fixtures/admin.yaml" do
+    action :run
+    cwd "/home/%s/site" % node["new_user"]
+    environment ({'PATH' => '/home/%s/venv/bin' % node["new_user"]})
+    user node["new_user"]
+    group node["new_user"]
+end
+
 
 execute "python manage.py collectstatic --noinput" do
     action :run
