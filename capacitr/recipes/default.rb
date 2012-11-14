@@ -133,7 +133,7 @@ end
 
 
 node[:fixtures].each do |fixture|
-    execute "python manage.py loaddata fixtures/#{fixture} --database=#{node[:dbhost]}" do
+    execute "python manage.py loaddata #{fixture} --database=#{node[:dbhost]}" do
         action :run
         cwd "/home/#{node[:new_user]}/site"
         environment ({'PATH' => "/home/#{node[:new_user]}/venv/bin"})
