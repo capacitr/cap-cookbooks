@@ -55,6 +55,8 @@ apt_packages = [
     "libjpeg62-dev",
     "supervisor",
     "zsh",
+    "libcurl3",
+    "libcurl3-gnutls",
     "git-core"
 ]
 
@@ -68,7 +70,7 @@ execute "easy_install virtualenv" do
     action :run
 end
 
-execute "virtualenv /home/#{node[:new_user]}/venv" do
+execute "virtualenv --distribute /home/#{node[:new_user]}/venv" do
     action :run
     user node[:new_user]
     group node[:new_user]
@@ -105,13 +107,18 @@ service "supervisor" do
     action :restart
 end
 
-execute "mysql -u root -ppassword -e \"create database #{node[:dbname]}\"" do
+execute "mysql -u root -ppassword -e \"create database \\\`#{node[:dbname]}\\\`\"" do
     action :run
-    returns [0, 1]
 end
 
 execute "mysql -u root -ppassword -e 'GRANT ALL ON \`#{node[:dbname]}\`.* TO \`#{node[:dbuser]}\`@localhost IDENTIFIED BY \"#{node[:dbpass]}\";'" do
     action :run
+end
+
+if node[:dbhost_location] != "localhost"
+    execute "echo \"127.0.0.1 #{node[:dbhost_location]}\" >> /etc/hosts" do
+        action :run
+    end
 end
 
 execute "python manage.py syncdb --noinput --database=#{node[:dbhost]}" do
@@ -149,5 +156,4 @@ execute "python manage.py collectstatic --noinput" do
     user node["new_user"]
     group node["new_user"]
 end
-
 
