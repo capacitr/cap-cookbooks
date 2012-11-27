@@ -1,3 +1,15 @@
+execute "echo \"#{node[:new_hostname]}\" > /etc/hostname" do
+    action :run
+    user "root"
+    group "root"
+end
+
+execute "echo \"127.0.0.1   #{node[:new_hostname]}\" >> /etc/hosts" do
+    action :run
+    user "root"
+    group "root"
+end
+
 user node["new_user"] do
     home "/home/#{node[:new_user]}"
     shell "/bin/zsh"
@@ -109,6 +121,8 @@ end
 
 execute "mysql -u root -ppassword -e \"create database \\\`#{node[:dbname]}\\\`\"" do
     action :run
+    returns [0,1]
+
 end
 
 execute "mysql -u root -ppassword -e 'GRANT ALL ON \`#{node[:dbname]}\`.* TO \`#{node[:dbuser]}\`@localhost IDENTIFIED BY \"#{node[:dbpass]}\";'" do
