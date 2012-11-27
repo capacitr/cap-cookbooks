@@ -1,10 +1,8 @@
-execute "echo \"#{node[:new_hostname]}\" > /etc/hostname" do
-    action :run
-    user "root"
-    group "root"
+template "/etc/hosts" do
+    source "hosts.erb"
 end
 
-execute "echo \"127.0.0.1   #{node[:new_hostname]}\" >> /etc/hosts" do
+execute "echo \"#{node[:new_hostname]}\" > /etc/hostname" do
     action :run
     user "root"
     group "root"
@@ -62,6 +60,10 @@ apt_packages = [
     "libmysqlclient-dev",
     "mysql-server",
     "zlib1g-dev", 
+    "libxml2",
+    "libxslt1.1",
+    "libxml2-dev",
+    "libxslt1-dev",
     "libfreetype6-dev", 
     "liblcms1-dev",
     "libjpeg62-dev",
@@ -89,14 +91,18 @@ execute "virtualenv --distribute /home/#{node[:new_user]}/venv" do
     returns [0,1]
 end
 
-node[:python_packages].each do |package|
-    execute "pip install #{package}" do
-        action :run
-        cwd "/home/#{node[:new_user]}/site"
-        user node[:new_user]
-        group node[:new_user]
-        environment ({'PATH' => "/home/#{node[:new_user]}/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
-    end
+execute "pip install -r requirements.txt" do
+    action :run
+    cwd "/home/#{node[:new_user]}/site"
+    user "root" #node[:new_user]
+    group "root" #node[:new_user]
+    environment ({'PATH' => "/home/#{node[:new_user]}/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
+end
+
+execute "chown -R #{node[:new_user]}:#{node[:new_user]} /home/#{node[:new_user]}/venv" do
+    action :run
+    user "root"
+    group "root"
 end
 
 template "/etc/nginx/sites-available/#{node[:new_user]}.conf" do
@@ -129,13 +135,7 @@ execute "mysql -u root -ppassword -e 'GRANT ALL ON \`#{node[:dbname]}\`.* TO \`#
     action :run
 end
 
-if node[:dbhost_location] != "localhost"
-    execute "echo \"127.0.0.1 #{node[:dbhost_location]}\" >> /etc/hosts" do
-        action :run
-    end
-end
-
-execute "python manage.py syncdb --noinput --database=#{node[:dbhost]}" do
+execute "python manage.py syncdb --noinput" do
     action :run
     cwd "/home/#{node[:new_user]}/site"
     environment ({'PATH' => "/home/#{node[:new_user]}/venv/bin:/usr/bin"})
@@ -143,7 +143,7 @@ execute "python manage.py syncdb --noinput --database=#{node[:dbhost]}" do
     group node["new_user"]
 end
 
-execute "python manage.py migrate --database=#{node[:dbhost]}" do
+execute "python manage.py migrate" do
     action :run
     cwd "/home/#{node[:new_user]}/site"
     environment ({'PATH' => "/home/#{node[:new_user]}/venv/bin"})
@@ -154,7 +154,7 @@ end
 
 
 node[:fixtures].each do |fixture|
-    execute "python manage.py loaddata #{fixture} --database=#{node[:dbhost]}" do
+    execute "python manage.py loaddata #{fixture}" do
         action :run
         cwd "/home/#{node[:new_user]}/site"
         environment ({'PATH' => "/home/#{node[:new_user]}/venv/bin"})

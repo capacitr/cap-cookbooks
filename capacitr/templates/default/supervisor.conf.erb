@@ -1,6 +1,5 @@
 [program:<%= node[:new_user] %>]
-command=/home/<%= node[:new_user] %>/venv/bin/gunicorn_django -b 0.0.0.0:<%=
-node[:port] %> -w 8
+command=/home/<%= node[:new_user] %>/venv/bin/gunicorn_django -b 0.0.0.0:<%= node[:port] %> -w 8
 directory=/home/<%= node[:new_user] %>/site
 environment=PATH="/home/<%= node[:new_user] %>/venv/bin"
 user=<%= node[:new_user] %>
