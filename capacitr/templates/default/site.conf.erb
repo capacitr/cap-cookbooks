@@ -7,6 +7,11 @@ server {
 
     client_max_body_size 10m;
 
+    location /favicon.ico {
+        alias /home/<%= node[:new_user] %>/static/; # STATIC_ROOT
+        expires 30d;
+    }
+
     location /static/ { # STATIC_URL
         alias /home/<%= node[:new_user] %>/static/; # STATIC_ROOT
         expires 30d;

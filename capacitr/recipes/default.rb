@@ -10,7 +10,7 @@ end
 
 user node["new_user"] do
     home "/home/#{node[:new_user]}"
-    shell "/bin/zsh"
+    shell "/bin/bash"
     action :create
 end
 
