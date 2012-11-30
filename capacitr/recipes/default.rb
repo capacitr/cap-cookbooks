@@ -35,6 +35,10 @@ directory "/home/#{node[:new_user]}/uploads" do
     group node["new_user"]
 end
 
+execute "chown -R #{node[:new_user]}:#{node[:new_user]} /home/#{node[:new_user]}" do
+    action :run
+end
+
 execute "apt-get update" do
     action :run
 end
