@@ -76,7 +76,9 @@ apt_packages = [
     "memcached",
     "libcurl3",
     "libcurl3-gnutls",
-    "git-core"
+    "git-core",
+    "unzip",
+    "openjdk-6-jre-headless",
 ]
 
 
@@ -85,6 +87,29 @@ apt_packages.each do |package|
         action :run 
     end
 end
+
+execute "wget -O /root/compiler-latest.zip http://closure-compiler.googlecode.com/files/compiler-latest.zip" do
+    action :run
+end
+
+execute "unzip /root/compiler-latest.zip -d /root/compiler-latest" do
+    action :run
+    user "root"
+    group "root"
+end
+
+execute "mv /root/compiler-latest/compiler.jar /usr/bin/closure_compiler" do
+    action :run
+    user "root"
+    group "root"
+end
+
+file "/usr/bin/closure_compiler" do
+    mode 00755
+    owner "root"
+    group "root"
+end
+
 execute "easy_install virtualenv" do
     action :run
 end
