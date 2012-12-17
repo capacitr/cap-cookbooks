@@ -73,6 +73,7 @@ apt_packages = [
     "libjpeg62-dev",
     "supervisor",
     "zsh",
+    "memcached",
     "libcurl3",
     "libcurl3-gnutls",
     "git-core"

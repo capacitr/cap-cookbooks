@@ -1,3 +1,13 @@
+template "/etc/hosts" do
+    source "hosts.erb"
+end
+
+execute "echo \"#{node[:new_hostname]}\" > /etc/hostname" do
+    action :run
+    user "root"
+    group "root"
+end
+
 user node["new_user"] do
     home "/home/#{node[:new_user]}"
     shell "/bin/zsh"
