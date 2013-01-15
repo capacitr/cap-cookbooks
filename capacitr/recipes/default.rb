@@ -118,7 +118,7 @@ execute "virtualenv --distribute /home/#{node[:new_user]}/venv" do
     returns [0,1]
 end
 
-execute "pip install -r requirements.txt" do
+execute "pip install --index-url=https://simple.crate.io -r requirements.txt" do
     action :run
     cwd "/home/#{node[:new_user]}/site"
     user "root" #node[:new_user]
