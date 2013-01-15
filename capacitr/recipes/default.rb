@@ -67,6 +67,9 @@ apt_packages = [
     "libcurl3-gnutls",
     "git-core",
     "unzip",
+    "make",
+    "ruby",
+    "rubygems",
     "openjdk-6-jre-headless",
 ]
 
@@ -101,6 +104,11 @@ end
 #
 execute "easy_install virtualenv" do
     action :run
+end
+
+gem_package "fpm" do
+    action :install
+    ignore_failure true
 end
 
 execute "virtualenv --distribute /home/#{node[:new_user]}/venv" do
