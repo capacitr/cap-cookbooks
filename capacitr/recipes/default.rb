@@ -14,12 +14,6 @@ directory "/home/#{node[:new_user]}/static" do
     group node["new_user"]
 end
 
-link "/home/#{node[:new_user]}/site" do
-    to "/vagrant"
-    owner node["new_user"]
-    group node["new_user"]
-end
-
 directory "/home/#{node[:new_user]}/uploads" do
     owner node["new_user"] 
     group node["new_user"]
@@ -124,6 +118,7 @@ execute "pip install --index-url=https://simple.crate.io -r requirements.txt" do
     user "root" #node[:new_user]
     group "root" #node[:new_user]
     environment ({'PATH' => "/home/#{node[:new_user]}/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
+    returns [0,1]
 end
 
 execute "chown -R #{node[:new_user]}:#{node[:new_user]} /home/#{node[:new_user]}/venv" do
