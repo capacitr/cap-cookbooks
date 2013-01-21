@@ -1,28 +1,28 @@
 server {
-    listen <%= node[:new_port] %>;
-    server_name <% node[:domains].each do |domain| %> <%= domain %><% end %>;
+    listen 80;
+    server_name <% @domains.each do |domain| %> <%= domain %><% end %>;
 
-    access_log /var/log/nginx/<%= node[:new_user] %>.access.log;
-    error_log /var/log/nginx/<%= node[:new_user] %>.error.log;
+    access_log /var/log/nginx/<%= @user %>.access.log;
+    error_log /var/log/nginx/<%= @user %>.error.log;
 
     client_max_body_size 10m;
 
     location /favicon.ico {
-        alias /home/<%= node[:new_user] %>/static/; # STATIC_ROOT
+        alias /home/<%= @user %>/static/; # STATIC_ROOT
         expires 30d;
     }
 
     location /static/ { # STATIC_URL
-        alias /home/<%= node[:new_user] %>/static/; # STATIC_ROOT
+        alias /home/<%= @user %>/static/; # STATIC_ROOT
         expires 30d;
     }
 
     location /uploads/ { # MEDIA_URL
-        alias /home/<%= node[:new_user] %>/uploads/; # MEDIA_ROOT
+        alias /home/<%= @user %>/uploads/; # MEDIA_ROOT
         expires 30d;
     }
 
     location / {
-        proxy_pass http://0.0.0.0:<%= node[:port] %>/;
+        proxy_pass http://0.0.0.0:<%= @port %>/;
     }
 }
