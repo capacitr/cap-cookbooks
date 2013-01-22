@@ -19,30 +19,33 @@ node["users"].each do |new_user|
         action :run
     end
 
-    template "/etc/supervisor/conf.d/{new_user[:username]}.conf" do
-        source "supervisor.conf.erb"
+    template "/etc/supervisor/conf.d/#{new_user[:username]}.conf" do
         variables({
             :user => new_user[:username],
             :port => new_user[:port],
             :domains => new_user[:domains]
         })
+        source "supervisor.remote.conf.erb"
     end
 
     execute "supervisorctl reread" do
         action :run
     end
-#
-#    execute "mysql -u root -ppassword -e \"create database \\\`{new_user[:dbname]}\\\`\"" do
-#        action :run
-#        returns [0,1]
-#    end
-#
-#    execute "mysql -u root -ppassword -e 'GRANT ALL ON \`{new_user[:dbname]}\`.* TO \`{new_user[:dbuser]}\`@localhost IDENTIFIED BY \"{new_user[:dbpass]}\";'" do
-#        action :run
-#    end
+
+    mysql_password = data_bag_item("mysql", "password")
+
+    execute "mysql -u root -p#{mysql_password} -e \"create database \\\`#{new_user[:dbname]}\\\`\"" do
+        action :run
+        returns [0,1]
+    end
+
+    execute "mysql -u root -p#{mysql_password} -e 'GRANT ALL ON \`#{new_user[:dbname]}\`.* TO \`#{new_user[:dbuser]}\`@localhost IDENTIFIED BY \"#{new_user[:dbpass]}\";'" do
+        action :run
+    end
 
     template "/etc/nginx/sites-available/#{new_user[:username]}.conf" do
         source "site.conf.erb"
+        action :create
         variables({
             :user => new_user[:username],
             :port => new_user[:port],
