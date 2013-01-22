@@ -127,11 +127,11 @@ execute "chown -R #{node[:new_user]}:#{node[:new_user]} /home/#{node[:new_user]}
     group "root"
 end
 
-template "/etc/nginx/sites-available/#{node[:new_user]}.conf" do
+template "/etc/nginx/sites-available/#{node[:new_user]}" do
     source "site.conf.erb"
 end
 
-link "/etc/nginx/sites-enabled/#{node[:new_user]}.conf" do
+link "/etc/nginx/sites-enabled/#{node[:new_user]}" do
     to "/etc/nginx/sites-available/#{node[:new_user]}.conf"
 end
 
@@ -145,15 +145,6 @@ end
 
 service "supervisor" do
     action :restart
-end
-
-execute "mysql -u root -ppassword -e \"create database \\\`#{node[:dbname]}\\\`\"" do
-    action :run
-    returns [0,1]
-end
-
-execute "mysql -u root -ppassword -e 'GRANT ALL ON \`#{node[:dbname]}\`.* TO \`#{node[:dbuser]}\`@localhost IDENTIFIED BY \"#{node[:dbpass]}\";'" do
-    action :run
 end
 
 execute "python manage.py syncdb --noinput" do
@@ -172,7 +163,6 @@ execute "python manage.py migrate" do
     group node["new_user"]
     returns [0,1]
 end
-
 
 node[:fixtures].each do |fixture|
     execute "python manage.py loaddata #{fixture}" do

@@ -7,5 +7,7 @@
     "port" : "8099",
     "domains" : [
         "local.berghoffbeer.com", "www.berghoffbeer.com", "berghoffbeer.com"
-    ]
+    ],
+    "fixtures" : ["sites.yaml"]
+
 }
