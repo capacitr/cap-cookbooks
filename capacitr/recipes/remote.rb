@@ -54,7 +54,7 @@ apps.each do |app|
         action :run
     end
 
-    template "/etc/nginx/sites-available/#{username}.conf" do
+    template "/etc/nginx/sites-available/#{username}" do
         source "site.conf.erb"
         action :create
         variables({
