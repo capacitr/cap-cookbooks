@@ -1,0 +1,11 @@
+{
+    "id" : "beavers",
+    "username" : "beavers",
+    "dbname" : "beavers",
+    "dbuser" : "beavers",
+    "dbpass" : "password",
+    "port" : "9810",
+    "domains" : [
+        "beavers.com"
+    ]
+}

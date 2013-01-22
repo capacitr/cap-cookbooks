@@ -1,0 +1,11 @@
+{
+    "id" : "capacitr",
+    "username" : "capacitr",
+    "dbname" : "capacitr_moooink2",
+    "dbuser" : "capacitr_moooink",
+    "dbpass" : "06d8e1c3",
+    "port" : "8083",
+    "domains" : [
+        "local.capacitr.com", "capacitr.com", "www.capacitr.com"
+    ]
+}

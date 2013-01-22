@@ -1,0 +1,11 @@
+{
+    "id" : "stg",
+    "username" : "stg",
+    "dbname" : "stg",
+    "dbuser" : "stg",
+    "dbpass" : "password",
+    "port" : "9810",
+    "domains" : [
+        "local.sharinthegrooves.com", "sharinthegrooves.com","www.sharinthegrooves.com"
+    ]
+}

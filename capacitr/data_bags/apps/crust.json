@@ -1,0 +1,11 @@
+{
+    "id" : "beavers",
+    "username" : "beavers",
+    "dbname" : "beavers",
+    "dbuser" : "beavers",
+    "dbpass" : "password",
+    "port" : "8100",
+    "domains" : [
+        "local.crustdelivers.com", "www.crustdelivers.com", "crustdelivers.com", "crust.capacitr.com"
+    ]
+}

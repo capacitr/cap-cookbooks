@@ -1,0 +1,11 @@
+{
+    "id" : "mercury",
+    "username" : "mercury",
+    "dbname" : "capacitr_moooink2",
+    "dbuser" : "capacitr_moooink",
+    "dbpass" : "06d8e1c3",
+    "port" : "8084",
+    "domains" : [
+        "crashcorners.com", "www.crashcorners.com", "mercury.capacitr.com"
+    ]
+}

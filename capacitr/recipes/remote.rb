@@ -1,29 +1,42 @@
-node["users"].each do |new_user|
-    user new_user[:username] do
-        home "/home/#{new_user[:username]}"
+apps = data_bag('apps')
+mysql = data_bag_item("passwords", "mysql")
+mysql_password = mysql["password"]
+
+apps.each do |app|
+    new_user = data_bag_item('apps', app)
+
+    username = new_user["username"]
+    dbname   = new_user["dbname"]
+    dbuser   = new_user["dbuser"]
+    dbpass   = new_user["dbpass"]
+    port     = new_user["port"]
+    domains  = new_user["domains"]
+
+    user username do
+        home "/home/#{username}"
         shell "/bin/bash"
         action :create
     end
 
-    directory "/home/#{new_user[:username]}" do
-        owner new_user[:username]
-        group new_user[:username]
+    directory "/home/#{username}" do
+        owner username
+        group username
     end
 
-    directory "/home/#{new_user[:username]}/uploads" do
-        owner new_user[:username]
-        group new_user[:username]
+    directory "/home/#{username}/uploads" do
+        owner username
+        group username
     end
 
-    execute "chown -R #{new_user[:username]}:#{new_user[:username]} /home/#{new_user[:username]}" do
+    execute "chown -R #{username}:#{username} /home/#{username}" do
         action :run
     end
 
-    template "/etc/supervisor/conf.d/#{new_user[:username]}.conf" do
+    template "/etc/supervisor/conf.d/#{username}.conf" do
         variables({
-            :user => new_user[:username],
-            :port => new_user[:port],
-            :domains => new_user[:domains]
+            :user => username,
+            :port => port,
+            :domains => domains
         })
         source "supervisor.remote.conf.erb"
     end
@@ -32,29 +45,27 @@ node["users"].each do |new_user|
         action :run
     end
 
-    mysql_password = data_bag_item("mysql", "password")
-
-    execute "mysql -u root -p#{mysql_password} -e \"create database \\\`#{new_user[:dbname]}\\\`\"" do
+    execute "mysql -u root -p#{mysql_password} -e \"create database \\\`#{dbname}\\\`\"" do
         action :run
         returns [0,1]
     end
 
-    execute "mysql -u root -p#{mysql_password} -e 'GRANT ALL ON \`#{new_user[:dbname]}\`.* TO \`#{new_user[:dbuser]}\`@localhost IDENTIFIED BY \"#{new_user[:dbpass]}\";'" do
+    execute "mysql -u root -p#{mysql_password} -e 'GRANT ALL ON \`#{dbname}\`.* TO \`#{dbuser}\`@localhost IDENTIFIED BY \"#{dbpass}\";'" do
         action :run
     end
 
-    template "/etc/nginx/sites-available/#{new_user[:username]}.conf" do
+    template "/etc/nginx/sites-available/#{username}.conf" do
         source "site.conf.erb"
         action :create
         variables({
-            :user => new_user[:username],
-            :port => new_user[:port],
-            :domains => new_user[:domains]
+            :user => username,
+            :port => port,
+            :domains => domains 
         })
     end
 
-    link "/etc/nginx/sites-enabled/#{new_user[:username]}.conf" do
-        to "/etc/nginx/sites-available/#{new_user[:username]}.conf"
+    link "/etc/nginx/sites-enabled/#{username}.conf" do
+        to "/etc/nginx/sites-available/#{username}.conf"
     end
 
     service "nginx" do
