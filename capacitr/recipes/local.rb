@@ -1,4 +1,5 @@
-app = data_bag('apps', node[:app])
+app = data_bag_item('apps', node[:app])
+mysql = data_bag_item('passwords', 'mysql')
 
 username = app["username"]
 dbname = app["dbname"]
@@ -6,6 +7,27 @@ dbuser = app["dbuser"]
 dbpass = app["dbpass"]
 domains = app["domains"]
 port = app["port"]
+fixtures = app["fixtures"]
+
+user username do
+    home "/home/#{username}"
+    shell "/bin/bash"
+    action :create
+end
+
+directory "/home/#{username}" do
+    owner username
+    group username
+end
+
+directory "/home/#{username}/uploads" do
+    owner username
+    group username
+end
+
+execute "chown -R #{username}:#{username} /home/#{username}" do
+    action :run
+end
 
 execute "apt-get update" do
     action :run
@@ -67,6 +89,7 @@ execute "unzip /root/compiler-latest.zip -d /root/compiler-latest" do
     action :run
     user "root"
     group "root"
+    returns [0,1]
 end
 
 execute "mv /root/compiler-latest/compiler.jar /usr/bin/closure_compiler" do
@@ -107,6 +130,10 @@ execute "pip install --index-url=https://simple.crate.io -r requirements.txt" do
     returns [0,1]
 end
 
+link "/home/#{username}/site" do
+    to "/vagrant"
+end
+
 execute "chown -R #{username}:#{username} /home/#{username}/venv" do
     action :run
     user "root"
@@ -130,7 +157,7 @@ execute "python manage.py migrate" do
     returns [0,1]
 end
 
-app[:fixtures].each do |fixture|
+fixtures.each do |fixture|
     execute "python manage.py loaddata #{fixture}" do
         action :run
         cwd "/home/#{username}/site"
@@ -148,4 +175,41 @@ execute "python manage.py collectstatic --noinput" do
     group username
 end
 
+execute "touch /home/#{username}/static/favicon.ico" do
+    action :run
+    user username
+    group username
+end
+
+template "/etc/supervisor/conf.d/#{username}.conf" do
+    variables({
+        :user => username,
+        :port => port,
+        :domains => domains
+    })
+    source "supervisor.remote.conf.erb"
+end
+
+template "/etc/nginx/sites-available/#{username}" do
+    source "site.conf.erb"
+    action :create
+    variables({
+        :user => username,
+        :port => port,
+        :domains => domains 
+    })
+end
+
+link "/etc/nginx/sites-enabled/#{username}" do
+    to "/etc/nginx/sites-available/#{username}"
+end
+
+service "nginx" do
+    action :reload
+end
+
+
+execute "supervisorctl restart" do
+    action :run
+end
 
