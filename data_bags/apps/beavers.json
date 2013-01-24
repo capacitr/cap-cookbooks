@@ -3,9 +3,10 @@
     "username" : "beavers",
     "dbname" : "beavers",
     "dbuser" : "beavers",
-    "dbpass" : "password",
+    "dbpass" : "06d8e1c3",
     "port" : "9810",
+    "fixtures" : ["sites.yaml"],
     "domains" : [
-        "beavers.com"
+        "beavers.capacitr.com", "www.beaversholdings.com", "beaversholdings.com"
     ]
 }
