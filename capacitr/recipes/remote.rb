@@ -110,10 +110,15 @@ apt_packages = [
 
 
 apt_packages.each do |package|
-    execute "apt-get install -yq {package}" do
+    execute "apt-get install -yq #{package}" do
         action :run 
+        returns [0,1]
     end
 end
 
+directory "/builds" do
+    owner "root" 
+    group "root" 
+end
 
 

@@ -1,5 +1,5 @@
 server {
-    listen 80;
+    listen 8008;
     server_name <% @domains.each do |domain| %> <%= domain %><% end %>;
 
     access_log /var/log/nginx/<%= @user %>.access.log;
@@ -9,11 +9,6 @@ server {
 
     location /favicon.ico {
         alias /home/<%= @user %>/static/; # STATIC_ROOT
-        expires 30d;
-    }
-
-    location /robots.txt {
-        alias /home/<%= @user %>/robots.txt; # STATIC_ROOT
         expires 30d;
     }
 

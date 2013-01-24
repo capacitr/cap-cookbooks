@@ -25,6 +25,17 @@ directory "/home/#{username}/uploads" do
     group username
 end
 
+directory "/home/#{username}/static" do
+    owner username
+    group username
+end
+
+execute "touch /home/#{username}/static/favicon.ico" do
+    action :run
+    user username
+    group username
+end
+
 execute "chown -R #{username}:#{username} /home/#{username}" do
     action :run
 end
@@ -81,6 +92,27 @@ apt_packages.each do |package|
 end
 
 
+execute "easy_install virtualenv" do
+    action :run
+end
+
+execute "virtualenv --distribute /home/#{username}/venv" do
+    action :run
+    user username
+    group username
+    returns [0,1]
+end
+
+execute "pip install --index-url=https://simple.crate.io -r requirements.txt" do
+    action :run
+    cwd "/home/#{username}/site"
+    user "root"
+    group "root" 
+    environment ({'PATH' => "/home/#{username}/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
+    returns [0]
+end
+
+
 execute "wget -O /root/compiler-latest.zip http://closure-compiler.googlecode.com/files/compiler-latest.zip" do
     action :run
 end
@@ -104,40 +136,24 @@ file "/usr/bin/closure_compiler" do
     group "root"
 end
 
-
-execute "easy_install virtualenv" do
-    action :run
-end
-
 gem_package "fpm" do
     action :install
     ignore_failure true
-end
-
-execute "virtualenv --distribute /home/#{username}/venv" do
-    action :run
-    user username
-    group username
-    returns [0,1]
-end
-
-execute "pip install --index-url=https://simple.crate.io -r requirements.txt" do
-    action :run
-    cwd "/home/#{username}/site"
-    user "root"
-    group "root" 
-    environment ({'PATH' => "/home/#{username}/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
-    returns [0,1]
-end
-
-link "/home/#{username}/site" do
-    to "/vagrant"
 end
 
 execute "chown -R #{username}:#{username} /home/#{username}/venv" do
     action :run
     user "root"
     group "root"
+end
+
+execute "mysql -u root -ppassword -e \"create database \\\`#{dbname}\\\`\"" do
+    action :run
+    returns [0,1]
+end
+
+execute "mysql -u root -ppassword -e 'GRANT ALL ON \`#{dbname}\`.* TO \`#{dbuser}\`@localhost IDENTIFIED BY \"#{dbpass}\";'" do
+    action :run
 end
 
 execute "python manage.py syncdb --noinput" do
@@ -175,12 +191,6 @@ execute "python manage.py collectstatic --noinput" do
     group username
 end
 
-execute "touch /home/#{username}/static/favicon.ico" do
-    action :run
-    user username
-    group username
-end
-
 template "/etc/supervisor/conf.d/#{username}.conf" do
     variables({
         :user => username,
@@ -191,7 +201,7 @@ template "/etc/supervisor/conf.d/#{username}.conf" do
 end
 
 template "/etc/nginx/sites-available/#{username}" do
-    source "site.conf.erb"
+    source "site.local.conf.erb"
     action :create
     variables({
         :user => username,
@@ -205,11 +215,10 @@ link "/etc/nginx/sites-enabled/#{username}" do
 end
 
 service "nginx" do
-    action :reload
+    action :restart
 end
 
-
-execute "supervisorctl restart" do
+execute "supervisorctl reload" do
     action :run
 end
 
