@@ -1,9 +1,9 @@
 {
     "id" : "dayan",
     "username" : "dayan",
-    "dbname" : "capacitr_moooink",
-    "dbuser" : "capacitr_moooink",
-    "dbpass" : "06d8e1c3",
+    "dbname" : "dayan",
+    "dbuser" : "dayan",
+    "dbpass" : "password",
     "port" : "9812",
     "domains" : [
         "beavers.com"

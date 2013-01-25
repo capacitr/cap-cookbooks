@@ -1,9 +1,9 @@
 {
     "id" : "sfx",
     "username" : "sfx",
-    "dbname" : "capacitr_moooink2",
-    "dbuser" : "capacitr_moooink",
-    "dbpass" : "06d8e1c3",
+    "dbname" : "sfx",
+    "dbuser" : "sfx",
+    "dbpass" : "password",
     "port" : "8089",
     "domains" : [
         "local.sfxbaseball.com", "www.sfxbaseball.com", "sfxbaseball.com"

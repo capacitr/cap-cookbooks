@@ -1,9 +1,9 @@
 {
     "id" : "glenmark",
     "username" : "glenmark",
-    "dbname" : "capacitr_moooink2",
-    "dbuser" : "capacitr_moooink",
-    "dbpass" : "06d8e1c3",
+    "dbname" : "glenmark",
+    "dbuser" : "glenmark",
+    "dbpass" : "password",
     "port" : "8080",
     "domains" : [
         "local.glenmarkfoods.com", "www.glenmarkfoods.com", "glenmarkfoods.com", "glenmark.capacitr.com"
