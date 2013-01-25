@@ -5,8 +5,8 @@
     "dbuser" : "beavers",
     "dbpass" : "06d8e1c3",
     "port" : "9810",
-    "fixtures" : ["sites.yaml"],
     "domains" : [
         "beavers.capacitr.com", "www.beaversholdings.com", "beaversholdings.com"
-    ]
+    ],
+    "fixtures" : ["sites.yaml"]
 }
