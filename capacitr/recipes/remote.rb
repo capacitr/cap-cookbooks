@@ -23,6 +23,11 @@ apps.each do |app|
         group username
     end
 
+    directory "/home/#{username}/static" do
+        owner username
+        group username
+    end
+
     directory "/home/#{username}/uploads" do
         owner username
         group username
@@ -76,6 +81,14 @@ apps.each do |app|
         source "robots.txt"
         owner username
         group username
+        mode 0755
+    end
+
+    file "/home/#{username}/static/favicon.ico" do
+        action :create_if_missing
+        owner username
+        group username
+        mode 0755
     end
 
 end
@@ -120,5 +133,4 @@ directory "/builds" do
     owner "root" 
     group "root" 
 end
-
 

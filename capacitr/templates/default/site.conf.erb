@@ -8,7 +8,7 @@ server {
     client_max_body_size 10m;
 
     location /favicon.ico {
-        alias /home/<%= @user %>/static/; # STATIC_ROOT
+        alias /home/<%= @user %>/static/favicon.ico; # STATIC_ROOT
         expires 30d;
     }
 
