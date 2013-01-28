@@ -1,3 +1,5 @@
+require 'json'
+
 app = data_bag_item('apps', node[:app])
 mysql = data_bag_item('passwords', 'mysql')
 
@@ -172,6 +174,7 @@ execute "python manage.py migrate" do
     group username
     returns [0,1]
 end
+
 
 fixtures.each do |fixture|
     execute "python manage.py loaddata #{fixture}" do
