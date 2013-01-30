@@ -9,7 +9,6 @@ dbuser = app["dbuser"]
 dbpass = app["dbpass"]
 domains = app["domains"]
 port = app["port"]
-fixtures = app["fixtures"]
 
 user username do
     home "/home/#{username}"
@@ -138,9 +137,10 @@ file "/usr/bin/closure_compiler" do
     group "root"
 end
 
-gem_package "fpm" do
-    action :install
-    ignore_failure true
+execute "gem install fpm" do
+    action :run
+    user "root"
+    group "root"
 end
 
 execute "chown -R #{username}:#{username} /home/#{username}/venv" do
@@ -173,17 +173,6 @@ execute "python manage.py migrate" do
     user username
     group username
     returns [0,1]
-end
-
-
-fixtures.each do |fixture|
-    execute "python manage.py loaddata #{fixture}" do
-        action :run
-        cwd "/home/#{username}/site"
-        environment ({'PATH' => "/home/#{username}/venv/bin"})
-        user username
-        group username
-    end
 end
 
 execute "python manage.py collectstatic --noinput" do
