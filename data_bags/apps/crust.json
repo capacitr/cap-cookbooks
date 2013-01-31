@@ -1,8 +1,8 @@
 {
-    "id" : "beavers",
-    "username" : "beavers",
-    "dbname" : "beavers",
-    "dbuser" : "beavers",
+    "id" : "crust",
+    "username" : "crust",
+    "dbname" : "crust",
+    "dbuser" : "crust",
     "dbpass" : "password",
     "port" : "8100",
     "domains" : [
