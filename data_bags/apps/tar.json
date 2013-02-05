@@ -1,0 +1,11 @@
+{
+    "id" : "tar",
+    "username" : "tar",
+    "dbname" : "tar",
+    "dbuser" : "tar",
+    "dbpass" : "password",
+    "port" : "9810",
+    "domains" : [
+        "local.tar.com"
+    ]
+}

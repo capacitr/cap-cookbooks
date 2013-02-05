@@ -1,5 +1,5 @@
 server {
-    listen 8008;
+    listen 80;
     server_name <% @domains.each do |domain| %> <%= domain %><% end %>;
 
     access_log /var/log/nginx/<%= @user %>.access.log;
@@ -23,6 +23,7 @@ server {
     }
 
     location / {
-        proxy_pass http://0.0.0.0:<%= @port %>/;
+        proxy_pass http://0.0.0.0:8000/;
     }
 }
+

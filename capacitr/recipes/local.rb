@@ -6,7 +6,6 @@ dbname = app["dbname"]
 dbuser = app["dbuser"]
 dbpass = app["dbpass"]
 domains = app["domains"]
-port = app["port"]
 
 user username do
     home "/home/#{username}"
@@ -106,10 +105,9 @@ end
 template "/etc/supervisor/conf.d/#{username}.conf" do
     variables({
         :user => username,
-        :port => port,
         :domains => domains
     })
-    source "supervisor.remote.conf.erb"
+    source "supervisor.local.conf.erb"
 end
 
 template "/etc/nginx/sites-available/#{username}" do
@@ -117,7 +115,6 @@ template "/etc/nginx/sites-available/#{username}" do
     action :create
     variables({
         :user => username,
-        :port => port,
         :domains => domains 
     })
 end
