@@ -104,7 +104,7 @@ end
 
 template "/etc/supervisor/conf.d/#{username}.conf" do
     variables({
-        :user => username,
+        :username => username,
         :domains => domains
     })
     source "supervisor.local.conf.erb"

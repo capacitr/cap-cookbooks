@@ -1,8 +1,8 @@
-[program:<%= node[:username] %>]
-command=/home/<%= node[:username] %>/venv/bin/gunicorn_django -b 0.0.0.0:8000 -w 5
-directory=/home/<%= node[:username] %>/site
-environment=PATH="/home/<%= node[:username] %>/venv/bin"
-user=<%= node[:username] %>
+[program:<%= @username %>]
+command=/home/<%= @username %>/venv/bin/gunicorn_django -b 0.0.0.0:8000 -w 5
+directory=/home/<%= @username %>/site
+environment=PATH="/home/<%= @username %>/venv/bin"
+user=<%= @username %>
 autostart=true
 autorestart=true
 startsecs=1
