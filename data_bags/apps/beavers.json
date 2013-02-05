@@ -3,7 +3,7 @@
     "username" : "beavers",
     "dbname" : "beavers",
     "dbuser" : "beavers",
-    "dbpass" : "06d8e1c3",
+    "dbpass" : "password",
     "port" : "9810",
     "domains" : [
         "beavers.capacitr.com", "www.beaversholdings.com", "beaversholdings.com"

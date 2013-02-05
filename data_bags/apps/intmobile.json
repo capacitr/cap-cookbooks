@@ -6,6 +6,6 @@
     "dbpass" : "password",
     "port" : "9821",
     "domains" : [
-        "local.intmobile.com"
+        "local.intmobile.com", "intmobile.capacitr.com"
     ]
 }
