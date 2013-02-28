@@ -6,7 +6,7 @@
     "dbpass" : "password",
     "port" : "9810",
     "domains" : [
-      "local.codeeditor.com",
+      "local.codeeditor.com"
     ],
     "fixtures" : ["sites.yaml"]
 }
