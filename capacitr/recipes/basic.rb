@@ -77,14 +77,6 @@ execute "mysql -u root -ppassword -e 'GRANT ALL ON \`#{dbname}\`.* TO \`#{dbuser
     action :run
 end
 
-template "/etc/supervisor/conf.d/#{username}.conf" do
-    variables({
-        :username => username,
-        :domains => domains
-    })
-    source "supervisor.local.conf.erb"
-end
-
 template "/etc/nginx/sites-available/#{username}" do
     source "site.local.conf.erb"
     action :create
@@ -100,9 +92,5 @@ end
 
 service "nginx" do
     action :restart
-end
-
-execute "supervisorctl reload" do
-    action :run
 end
 

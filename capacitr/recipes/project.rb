@@ -115,26 +115,9 @@ execute "pip install --index-url=https://simple.crate.io -r requirements.txt" do
     returns [0,1]
 end
 
-execute "wget -O /root/compiler-latest.zip http://closure-compiler.googlecode.com/files/compiler-latest.zip" do
-    action :run
-end
-
-execute "unzip /root/compiler-latest.zip -d /root/compiler-latest" do
+execute "gem install closure-compiler" do
     action :run
     user "root"
-    group "root"
-    returns [0,1]
-end
-
-execute "mv /root/compiler-latest/compiler.jar /usr/bin/closure_compiler" do
-    action :run
-    user "root"
-    group "root"
-end
-
-file "/usr/bin/closure_compiler" do
-    mode 00755
-    owner "root"
     group "root"
 end
 
