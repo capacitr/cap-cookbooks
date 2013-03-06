@@ -43,7 +43,7 @@ apps.each do |app|
             :port => port,
             :domains => domains
         })
-        source "supervisor.remote.conf.erb"
+        source "supervisor.conf.erb"
     end
 
     execute "supervisorctl reread" do
