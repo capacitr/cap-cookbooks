@@ -78,7 +78,7 @@ execute "mysql -u root -ppassword -e 'GRANT ALL ON \`#{dbname}\`.* TO \`#{dbuser
 end
 
 template "/etc/nginx/sites-available/#{username}" do
-    source "site.local.conf.erb"
+    source "site.conf.erb"
     action :create
     variables({
         :user => username,
@@ -90,7 +90,7 @@ end
 template "/etc/supervisor/conf.d/#{username}.conf" do
     variables({
         :user => username,
-        :port => port,
+        :port => "8000",
         :domains => domains
     })
     source "supervisor.conf.erb"
